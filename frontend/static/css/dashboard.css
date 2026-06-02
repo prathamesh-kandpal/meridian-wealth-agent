@@ -1,0 +1,14 @@
+/* Fix table header layout wrapping */
+table th {
+    white-space: nowrap;
+}
+
+/* Smooth zoom-in states for analytic overview tracking cards */
+.metric-card {
+    transition: transform 0.2s ease-in-out, border-color 0.2s ease-in-out;
+}
+
+.metric-card:hover {
+    transform: translateY(-2px);
+    border-color: #10b981;
+}

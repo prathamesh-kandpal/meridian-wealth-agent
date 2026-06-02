@@ -1,0 +1,17 @@
+/* Base root variables to complement Tailwind themes if needed */
+:root {
+    --color-slate-950: #020617;
+    --color-slate-900: #0f172a;
+    --color-emerald-600: #059669;
+}
+
+/* Global focus states and baseline transitions */
+input:focus, button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.4);
+}
+
+/* Prevent text highlighting during fast double clicks on control cards */
+.no-select {
+    user-select: none;
+}

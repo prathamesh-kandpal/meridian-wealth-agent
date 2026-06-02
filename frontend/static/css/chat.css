@@ -1,0 +1,23 @@
+/* Custom utility scrollbar for messaging and raw code logs */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+/* Prevent multi-line prompt messages from squeezing out user profiles */
+.whitespace-pre-wrap {
+    word-break: break-word;
+}

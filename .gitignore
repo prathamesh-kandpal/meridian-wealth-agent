@@ -1,0 +1,27 @@
+# === Virtual Environments ===
+.venv/
+venv/
+ENV/
+env/
+
+# === Environment Secrets & API Keys ===
+.env
+*.env
+secrets.json
+
+# === Infrastructure & Security Certificates ===
+*.pem
+*.key
+*.crt
+
+# === SQLite Database Local State (Optional) ===
+# Note: If you want to deploy your sample data file to GitHub, leave this line commented out.
+# If you want everyone to connect their own clean DB, uncomment the next line:
+# data/meridian_wealth
+
+# === Operating System Noise ===
+Thumbs.db
+.DS_Store
+__pycache__/
+*.pyc
+.vscode/

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - Meridian Wealth</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen flex items-center justify-center p-4">
+
+    <div class="w-full max-w-md bg-slate-950 border border-slate-800 rounded-2xl shadow-2xl p-8 space-y-6">
+        <div class="text-center space-y-2">
+            <div class="inline-flex bg-emerald-600 p-3 rounded-xl text-white shadow-inner mb-2">
+                <i class="fa-solid fa-lock text-xl"></i>
+            </div>
+            <h2 class="text-xl font-bold tracking-tight text-white">Identity Management Portal</h2>
+            <p class="text-xs text-slate-400">Provide credentials to activate analyst workspace session</p>
+        </div>
+
+        <div id="errorAlert" class="hidden text-xs bg-rose-950/50 text-rose-400 border border-rose-900/60 p-3 rounded-lg flex items-center space-x-2">
+            <i class="fa-solid fa-triangle-exclamation"></i>
+            <span id="errorText">Invalid account parameters verified.</span>
+        </div>
+
+        <form id="loginForm" class="space-y-4">
+            <div class="space-y-1.5">
+                <label for="username" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Username / ID</label>
+                <div class="relative">
+                    <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm"><i class="fa-solid fa-user"></i></span>
+                    <input type="text" id="username" name="username" required autocomplete="username" placeholder="analyst@meridian.com"
+                           class="w-full bg-slate-900 text-sm rounded-xl pl-10 pr-4 py-3 border border-slate-800 focus:outline-none focus:border-emerald-500 transition text-slate-200 placeholder-slate-600">
+                </div>
+            </div>
+
+            <div class="space-y-1.5">
+                <label for="password" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Password</label>
+                <div class="relative">
+                    <span class="absolute left-3.5 top-3.5 text-slate-500 text-sm"><i class="fa-solid fa-key"></i></span>
+                    <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••"
+                           class="w-full bg-slate-900 text-sm rounded-xl pl-10 pr-4 py-3 border border-slate-800 focus:outline-none focus:border-emerald-500 transition text-slate-200 placeholder-slate-600">
+                </div>
+            </div>
+
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-medium py-3 rounded-xl transition shadow-md flex items-center justify-center gap-2 mt-2">
+                Sign In <i class="fa-solid fa-right-to-bracket text-xs"></i>
+            </button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const errorAlert = document.getElementById('errorAlert');
+            const errorText = document.getElementById('errorText');
+            
+            errorAlert.classList.add('hidden');
+
+            const formData = new FormData(e.target);
+            
+            try {
+                // In production, this can point to a standard OAuth2 Password flow endpoint (/api/token)
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const data = await response.json();
+                    errorText.textContent = data.detail || "Authentication validation failed.";
+                    errorAlert.classList.remove('hidden');
+                }
+            } catch (err) {
+                errorText.textContent = "Network error. Unable to contact authentication node.";
+                errorAlert.classList.remove('hidden');
+            }
+        });
+    </script>
+</body>
+</html>

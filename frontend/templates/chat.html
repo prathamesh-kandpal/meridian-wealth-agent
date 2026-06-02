@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meridian Wealth - Financial Analyst Agent</title>
+    <!-- Tailwind CSS for sleek UI styling -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Custom scrollbar behaviors */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+    
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans h-screen flex flex-col overflow-hidden">
+
+    <!-- Header Navigation -->
+    <header class="bg-slate-950 border-b border-slate-800 px-6 py-4 flex items-center justify-between shadow-md">
+        <div class="flex items-center space-x-3">
+            <div class="bg-emerald-600 p-2 rounded-lg text-white flex items-center justify-center shadow-inner">
+                <i class="fa-solid fa-chart-line text-xl"></i>
+            </div>
+            <div>
+                <h1 class="text-lg font-bold tracking-tight text-white">Meridian Wealth Partners</h1>
+                <p class="text-xs text-slate-400">ReAct Agentic Workspace v1.0</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <span class="flex items-center text-xs bg-slate-800 px-3 py-1.5 rounded-full text-emerald-400 border border-slate-700 font-mono">
+                <span class="h-2 w-2 bg-emerald-500 rounded-full inline-block mr-2 animate-pulse"></span>
+                Connected to Engine
+            </span>
+        </div>
+    </header>
+
+    <!-- Main Content Workspace Grid -->
+    <main class="flex-1 flex overflow-hidden">
+        
+        <!-- Left Side: Interactive Agent Chat Interface -->
+        <section class="w-7/12 flex flex-col border-r border-slate-800 bg-slate-900">
+            <!-- Area Selector Header -->
+            <div class="bg-slate-950/40 p-4 border-b border-slate-800 flex items-center space-x-3">
+                <label for="clientIdInput" class="text-xs font-semibold uppercase tracking-wider text-slate-400">Target Client ID:</label>
+                <input type="number" id="clientIdInput" placeholder="Optional (e.g. 1)" 
+                       class="bg-slate-800 text-slate-200 text-sm px-3 py-1 rounded border border-slate-700 focus:outline-none focus:border-emerald-500 w-36 transition">
+            </div>
+
+            <!-- Messages Window Stream -->
+            <div id="chatWindow" class="flex-1 p-6 overflow-y-auto space-y-4 custom-scrollbar">
+                <!-- Welcome greeting -->
+                <div class="flex space-x-3 max-w-2xl">
+                    <div class="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold shrink-0 text-white shadow">
+                        MW
+                    </div>
+                    <div class="bg-slate-800 text-slate-200 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm border border-slate-700/60 text-sm leading-relaxed">
+                        Welcome to your Financial Assistant workflow. I can securely view internal portfolios, calculate asset exposure, lookup compliance thresholds via policy vector paths, or fetch real-time market narratives. How can I assist you today?
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Input Bar Layout -->
+            <div class="p-4 bg-slate-950 border-t border-slate-800">
+                <form id="chatForm" class="flex items-center space-x-3 relative">
+                    <input type="text" id="userInput" placeholder="Ask about client compliance, portfolio metrics, or market updates..." required autocomplete="off"
+                           class="flex-1 bg-slate-800 text-slate-100 placeholder-slate-400 text-sm rounded-xl pl-4 pr-12 py-3.5 border border-slate-700 focus:outline-none focus:border-emerald-500 transition shadow-inner">
+                    <button type="submit" id="sendBtn" 
+                            class="absolute right-2 top-2 bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white px-3.5 py-1.5 rounded-lg text-sm font-medium transition flex items-center justify-center shadow-md">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </section>
+
+        <!-- Right Side: Real-Time Agent Thought & Action Log Inspector -->
+        <section class="w-5/12 bg-slate-950 flex flex-col">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-solid fa-brain text-emerald-500"></i>
+                    <h2 class="text-sm font-semibold tracking-wide uppercase text-slate-300">Agentic Execution Steps</h2>
+                </div>
+                <button onclick="clearInspector()" class="text-xs text-slate-500 hover:text-slate-300 transition">
+                    <i class="fa-solid fa-trash-can mr-1"></i> Clear Log
+                </button>
+            </div>
+            
+            <div id="inspectorPanel" class="flex-1 p-5 overflow-y-auto space-y-4 custom-scrollbar text-xs font-mono leading-relaxed text-slate-400">
+                <div id="emptyInspectorMessage" class="h-full flex flex-col items-center justify-center text-slate-600 space-y-2 py-20">
+                    <i class="fa-solid fa-terminal text-3xl"></i>
+                    <p class="text-center font-sans text-xs">Awaiting runtime queries... Tool calls, parameters, and agent logic loops will appear here dynamically.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- UI Interaction Scripts Integration -->
+    <script>
+        const chatForm = document.getElementById('chatForm');
+        const userInput = document.getElementById('userInput');
+        const clientIdInput = document.getElementById('clientIdInput');
+        const chatWindow = document.getElementById('chatWindow');
+        const inspectorPanel = document.getElementById('inspectorPanel');
+        const emptyInspectorMessage = document.getElementById('emptyInspectorMessage');
+        const sendBtn = document.getElementById('sendBtn');
+
+        chatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const messageText = userInput.value.trim();
+            if (!messageText) return;
+
+            const clientId = clientIdInput.value.trim() ? parseInt(clientIdInput.value.trim()) : null;
+
+            // Render User Bubble
+            appendMessage('user', messageText);
+            userInput.value = '';
+
+            // Clean & initialize execution tracker indicators
+            if(emptyInspectorMessage) emptyInspectorMessage.style.display = 'none';
+            appendInspectorLog('SYSTEM', `Initiating ReAct graph execution loop for prompt: "${messageText}"`);
+
+            // Inject Loading/Thinking indicator for user experience
+            const typingBubble = appendTypingIndicator();
+
+            try {
+                // Execute REST API Request to FastAPI Backend
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        client_id: clientId,
+                        message: messageText
+                    })
+                });
+
+                typingBubble.remove();
+
+                if (!response.ok) {
+                    throw new Error(`HTTP Error Status: ${response.status}`);
+                }
+
+                const data = await response.json();
+
+                // 1. Process and Render Intermediate Thought Chains / Tool Executions
+                if (data.intermediate_steps && data.intermediate_steps.length > 0) {
+                    data.intermediate_steps.forEach((step, index) => {
+                        const logHeader = `STEP ${index + 1}: Tool Usage [${step.tool}]`;
+                        const details = `Thought Log:\n${step.log}\n\nArguments Applied:\n${step.tool_input}`;
+                        appendInspectorLog('TOOL_CALL', details, logHeader);
+                    });
+                } else {
+                    appendInspectorLog('INFO', 'Agent addressed query directly without external tool intervention.');
+                }
+
+                // 2. Render Agent Final Structural Response
+                appendMessage('agent', data.output);
+                appendInspectorLog('SUCCESS', 'Execution sequence complete. Agent returned final answer block.');
+
+            } catch (error) {
+                if(typingBubble) typingBubble.remove();
+                appendMessage('agent', `⚠️ Technical Error processing query: ${error.message}`);
+                appendInspectorLog('ERROR', error.stack || error.message, 'Agent Execution Execution Interrupted');
+            }
+        });
+
+        function appendMessage(sender, text) {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex space-x-3 max-w-2xl' + (sender === 'user' ? ' ml-auto justify-end' : '');
+            
+            const isUser = sender === 'user';
+            
+            const avatarHtml = isUser 
+                ? `<div class="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold text-slate-200 shrink-0 shadow order-2 ml-3">UX</div>`
+                : `<div class="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow mr-3">MW</div>`;
+
+            const contentHtml = `
+                <div class="${isUser ? 'bg-emerald-700 text-white rounded-br-none' : 'bg-slate-800 text-slate-200 rounded-tl-none'} rounded-2xl px-4 py-3 shadow-sm border border-slate-700/40 text-sm leading-relaxed whitespace-pre-wrap ${isUser ? 'order-1' : ''}">
+                    ${escapeHtml(text)}
+                </div>
+            `;
+            
+            wrapper.innerHTML = avatarHtml + contentHtml;
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+        }
+
+        function appendTypingIndicator() {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'flex space-x-3 max-w-2xl';
+            wrapper.innerHTML = `
+                <div class="h-8 w-8 rounded-full bg-emerald-600 flex items-center justify-center text-xs font-bold text-white shrink-0 shadow mr-3">MW</div>
+                <div class="bg-slate-800 text-slate-400 rounded-2xl rounded-tl-none px-4 py-3 border border-slate-700/40 text-sm flex items-center space-x-1">
+                    <span class="animate-bounce inline-block h-1.5 w-1.5 bg-slate-400 rounded-full"></span>
+                    <span class="animate-bounce inline-block h-1.5 w-1.5 bg-slate-400 rounded-full [animation-delay:0.2s]"></span>
+                    <span class="animate-bounce inline-block h-1.5 w-1.5 bg-slate-400 rounded-full [animation-delay:0.4s]"></span>
+                </div>
+            `;
+            chatWindow.appendChild(wrapper);
+            chatWindow.scrollTop = chatWindow.scrollHeight;
+            return wrapper;
+        }
+
+        function appendInspectorLog(type, content, title = '') {
+            if(emptyInspectorMessage) emptyInspectorMessage.style.display = 'none';
+
+            const block = document.createElement('div');
+            block.className = `p-3 rounded-lg border text-xs font-mono transition-all duration-200 shadow-sm mb-3 `;
+
+            let badgeColor = 'bg-slate-800 text-slate-300 border-slate-700';
+            if (type === 'SYSTEM') badgeColor = 'bg-blue-950 text-blue-400 border-blue-900/60';
+            if (type === 'TOOL_CALL') badgeColor = 'bg-amber-950 text-amber-400 border-amber-900/60';
+            if (type === 'SUCCESS') badgeColor = 'bg-emerald-950 text-emerald-400 border-emerald-900/60';
+            if (type === 'ERROR') badgeColor = 'bg-rose-950 text-rose-400 border-rose-900/60';
+
+            block.className += badgeColor;
+
+            const headerHtml = title ? `<div class="font-bold border-b border-current/10 pb-1 mb-1.5 uppercase tracking-wide text-[11px]">${title}</div>` : '';
+            block.innerHTML = `${headerHtml}<div class="whitespace-pre-wrap">${escapeHtml(content)}</div>`;
+            
+            inspectorPanel.appendChild(block);
+            inspectorPanel.scrollTop = inspectorPanel.scrollHeight;
+        }
+
+        function clearInspector() {
+            inspectorPanel.innerHTML = '';
+            inspectorPanel.appendChild(emptyInspectorMessage);
+            emptyInspectorMessage.style.display = 'flex';
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        }
+    </script>
+</body>
+</html>
